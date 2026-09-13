@@ -34,7 +34,7 @@ def generate_workout_plan(
     if not api_key:
         return "⚠️ Error: GROQ_API_KEY is not set. Please check your .env file."
 
-    model_name= os.getenv("GROQ_MODEL_NAME", "qwen/qwen3.8-27b")
+    model_name= os.getenv("GROQ_MODEL_NAME", "openai/gpt-oss-120b")
 
     # 3. Define the System Prompt (Role, Constraints & Formatting Rules)
     system_prompt = """You are an elite, certified personal trainer and strength coach.
