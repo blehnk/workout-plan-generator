@@ -7,7 +7,11 @@ st.set_page_config(page_title="AI Workout Planner", page_icon="🏋️", layout=
 st.title("🏋️ Personalized AI Workout Plan Generator")
 st.write("Fill in your details below and get a custom weekly routine designed by an AI coach.")
 
-# 1. Structured Inputs
+# 1. Initialize session state memory (Stretch Goal 1)
+if "workout_plan" not in st.session_state:
+    st.session_state["workout_plan"] = None
+
+# 2. Structured Inputs
 col1, col2 = st.columns(2)
 
 with col1:
@@ -34,7 +38,7 @@ injuries_or_limitations = st.text_input(
     placeholder="e.g. bad knees, lower back pain, no overhead pressing"
 )
 
-# 2. Action Button
+# 3. Action Button
 if st.button("Generate Workout Plan", type="primary", use_container_width=True):
     with st.spinner("Consulting your AI Personal Trainer..."):
         plan = generate_workout_plan(
@@ -46,7 +50,28 @@ if st.button("Generate Workout Plan", type="primary", use_container_width=True):
             time_per_day=time_per_day,
             injuries_or_limitations=injuries_or_limitations
         )
+        # Store in session state so it survives widget interactions!
+        st.session_state["workout_plan"] = plan
         
-        # 3. Display the result
-        st.markdown("---")
-        st.markdown(plan)
+# 4. Display Result & Stretch Goals (Download & Reset)
+if st.session_state["workout_plan"]:
+    st.markdown("---")
+
+    # Action buttons above the plan
+    btn_col1, btn_col2 = st.columns([1, 1])
+    with btn_col1:
+        st.download_button(
+            label="📥 Download Plan (.md)",
+            data=st.session_state["workout_plan"],
+            file_name="my_workout_plan.md",
+            mime="text/markdown",
+            use_container_width=True
+        )
+
+    with btn_col2:
+        if st.button("🗑️ Clear Plan", use_container_width=True):
+            st.session_state["workout_plan"] = None
+            st.rerun()
+
+    # Render the formatted markdown plan
+    st.markdown(st.session_state["workout_plan"])
